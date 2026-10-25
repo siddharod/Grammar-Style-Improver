@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { AnalysisRecord, ToneType } from '../types';
-import { INITIAL_ANALYSIS_DATA, MOCK_HISTORY, SAMPLE_PRESETS } from '../data/mockData';
+import { INITIAL_ANALYSIS_DATA, SAMPLE_PRESETS } from '../data/mockData';
+import { api } from '../services/api';
+import { useAuth } from './AuthContext';
 
 interface AnalysisContextType {
   currentAnalysis: AnalysisRecord;
@@ -13,17 +15,39 @@ interface AnalysisContextType {
   applyAllFixes: () => void;
   loadPreset: (presetId: string) => void;
   loadHistoryRecord: (id: string) => void;
-  deleteHistoryRecord: (id: string) => void;
+  deleteHistoryRecord: (id: string) => Promise<void>;
   updateOriginalText: (text: string) => void;
+  refreshHistory: () => Promise<void>;
 }
 
 const AnalysisContext = createContext<AnalysisContextType | undefined>(undefined);
 
 export const AnalysisProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAuthenticated } = useAuth();
   const [currentAnalysis, setCurrentAnalysis] = useState<AnalysisRecord>(INITIAL_ANALYSIS_DATA);
-  const [history, setHistory] = useState<AnalysisRecord[]>(MOCK_HISTORY);
+  const [history, setHistory] = useState<AnalysisRecord[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('dashboard');
+
+  // Fetch real persistent analysis history whenever authenticated
+  const refreshHistory = async () => {
+    if (!isAuthenticated) {
+      setHistory([]);
+      return;
+    }
+    try {
+      const res = await api.getHistory();
+      if (res.history) {
+        setHistory(res.history);
+      }
+    } catch (err) {
+      console.warn('Failed to load history from backend:', err);
+    }
+  };
+
+  useEffect(() => {
+    refreshHistory();
+  }, [isAuthenticated]);
 
   const updateOriginalText = (text: string) => {
     setCurrentAnalysis((prev) => {
@@ -91,77 +115,19 @@ export const AnalysisProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }));
   };
 
-  const runAnalysis = async (text: string, tone: ToneType, _language: string) => {
+  const runAnalysis = async (text: string, tone: ToneType, language: string) => {
     setIsAnalyzing(true);
-    await new Promise((r) => setTimeout(r, 1200)); // UI loading state simulation
-
-    // Local heuristic computation for instant reactive feedback
-    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-    const chars = text.length;
-    const sentences = text.trim() ? text.split(/[.!?]+/).filter(Boolean).length || 1 : 0;
-    const asl = sentences > 0 ? words / sentences : 0;
-    const approxFlesch = Math.min(100, Math.max(10, Math.round(206.835 - 1.015 * asl - 84.6 * 1.5)));
-
-    let category = 'Standard';
-    let grade = '8th to 9th Grade';
-    if (approxFlesch >= 80) {
-      category = 'Easy';
-      grade = '6th Grade';
-    } else if (approxFlesch >= 60) {
-      category = 'Standard';
-      grade = '8th to 9th Grade';
-    } else if (approxFlesch >= 40) {
-      category = 'Fairly Difficult';
-      grade = '10th to 12th Grade';
-    } else {
-      category = 'Difficult';
-      grade = 'College Level';
+    try {
+      const res = await api.analyze(text, tone, language);
+      const newRecord = res.analysis;
+      setCurrentAnalysis(newRecord);
+      setHistory((prev) => [newRecord, ...prev.filter((h) => h.id !== newRecord.id)]);
+    } catch (err: any) {
+      console.error('Analysis error:', err);
+      throw err;
+    } finally {
+      setIsAnalyzing(false);
     }
-
-    // Generated improved text placeholder preview
-    const improved = text
-      .replace(/beleives/gi, 'believes')
-      .replace(/Their are/g, 'There are')
-      .replace(/effects/g, 'affects')
-      .replace(/revert back/g, 'respond')
-      .replace(/touch base/g, 'connect')
-      .replace(/ASAP/g, 'at your earliest convenience')
-      .replace(/Due to the fact that/g, 'Because')
-      .replace(/In order to/g, 'To');
-
-    const newRecord: AnalysisRecord = {
-      id: `anl_${Date.now()}`,
-      userId: 'usr_demo_101',
-      title: `${tone} Text Analysis`,
-      originalText: text,
-      improvedText: improved,
-      targetTone: tone,
-      providerUsed: 'Gemini (Primary)',
-      createdAt: new Date().toISOString(),
-      metrics: {
-        fleschScore: approxFlesch,
-        fleschCategory: category,
-        gradeLevel: grade,
-        readingTimeMinutes: Math.max(0.1, Number((words / 200).toFixed(1))),
-        wordCount: words,
-        characterCount: chars,
-        sentenceCount: sentences,
-        averageSentenceLength: Number(asl.toFixed(1)),
-        averageSyllablesPerWord: 1.52,
-        complexWordPercentage: 14.2,
-      },
-      issues: currentAnalysis.issues,
-      detectedTones: [
-        { tone: tone, percentage: 72, description: `Primary tone aligned with target style (${tone}).`, color: 'blue' },
-        { tone: 'Informative', percentage: 18, description: 'Direct explanatory clarity.', color: 'lavender' },
-        { tone: 'Analytical', percentage: 10, description: 'Objective structure and phrasing.', color: 'mint' },
-      ],
-      suggestions: currentAnalysis.suggestions,
-    };
-
-    setCurrentAnalysis(newRecord);
-    setHistory((prev) => [newRecord, ...prev]);
-    setIsAnalyzing(false);
   };
 
   const loadHistoryRecord = (id: string) => {
@@ -172,8 +138,14 @@ export const AnalysisProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  const deleteHistoryRecord = (id: string) => {
-    setHistory((prev) => prev.filter((h) => h.id !== id));
+  const deleteHistoryRecord = async (id: string) => {
+    try {
+      await api.deleteHistoryRecord(id);
+      setHistory((prev) => prev.filter((h) => h.id !== id));
+    } catch (err) {
+      console.error('Delete history error:', err);
+      throw err;
+    }
   };
 
   return (
@@ -191,6 +163,7 @@ export const AnalysisProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         loadHistoryRecord,
         deleteHistoryRecord,
         updateOriginalText,
+        refreshHistory,
       }}
     >
       {children}

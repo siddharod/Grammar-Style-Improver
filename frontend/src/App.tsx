@@ -15,9 +15,22 @@ import { HistoryPage } from './pages/HistoryPage';
 import { SettingsPage } from './pages/SettingsPage';
 
 const MainContent: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isInitializing } = useAuth();
   const { activeTab, setActiveTab } = useAnalysis();
   const [authView, setAuthView] = useState<'login' | 'register'>('login');
+
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen bg-[#04123F] flex items-center justify-center p-6">
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-[#255DCE] to-[#021861] text-white shadow-xl shadow-[#255DCE]/40 electric-glow-btn animate-pulse border border-[rgba(79,130,255,0.4)]">
+            <span className="text-2xl">✨</span>
+          </div>
+          <p className="text-sm font-semibold text-[#B8C8F5] tracking-wide">Connecting to Grammar Optimizer Service...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     if (authView === 'register') {

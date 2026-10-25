@@ -1,69 +1,117 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { User } from '../types';
-import { DEMO_USER } from '../data/mockData';
+import { api } from '../services/api';
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, pass: string, remember: boolean) => Promise<boolean>;
-  demoLogin: () => void;
+  demoLogin: () => Promise<void>;
   register: (name: string, email: string, pass: string) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
   loading: boolean;
+  isInitializing: boolean;
+  authError: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('saas_grammar_user');
-    return saved ? JSON.parse(saved) : DEMO_USER; // Default to demo user for viva ease, can logout anytime
-  });
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
+  // Synchronize authentication state on initial mount via /api/auth/me
   useEffect(() => {
-    if (user) {
-      localStorage.setItem('saas_grammar_user', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('saas_grammar_user');
+    let isMounted = true;
+    async function checkAuthSession() {
+      try {
+        const res = await api.getMe();
+        if (isMounted && res.authenticated && res.user) {
+          setUser(res.user);
+        }
+      } catch {
+        if (isMounted) {
+          setUser(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsInitializing(false);
+        }
+      }
     }
-  }, [user]);
-
-  const login = async (email: string, _pass: string, _remember: boolean): Promise<boolean> => {
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 600)); // UI polish simulation
-    const loggedUser: User = {
-      ...DEMO_USER,
-      email: email || DEMO_USER.email,
-      name: email.split('@')[0] || DEMO_USER.name,
+    checkAuthSession();
+    return () => {
+      isMounted = false;
     };
-    setUser(loggedUser);
-    setLoading(false);
-    return true;
-  };
+  }, []);
 
-  const demoLogin = () => {
-    setUser(DEMO_USER);
-  };
-
-  const register = async (name: string, email: string, _pass: string): Promise<boolean> => {
+  const login = async (email: string, pass: string, _remember: boolean): Promise<boolean> => {
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 700));
-    const newUser: User = {
-      id: `usr_${Date.now()}`,
-      name,
-      email,
-      role: 'Student / Researcher',
-      joinedDate: 'Oct 2026',
-      analysesCount: 0,
-    };
-    setUser(newUser);
-    setLoading(false);
-    return true;
+    setAuthError(null);
+    try {
+      const res = await api.login(email, pass);
+      setUser(res.user);
+      return true;
+    } catch (err: any) {
+      setAuthError(err.message || 'Login failed. Please check your credentials.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const logout = () => {
-    setUser(null);
+  const register = async (name: string, email: string, pass: string): Promise<boolean> => {
+    setLoading(true);
+    setAuthError(null);
+    try {
+      const res = await api.register(name, email, pass);
+      setUser(res.user);
+      return true;
+    } catch (err: any) {
+      setAuthError(err.message || 'Registration failed. Please check your inputs.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const demoLogin = async () => {
+    setLoading(true);
+    setAuthError(null);
+    const demoEmail = 'alex.morgan@university.edu';
+    const demoPassword = 'Password123!';
+    const demoName = 'Alex Morgan';
+
+    try {
+      // First attempt to log in
+      try {
+        const loginRes = await api.login(demoEmail, demoPassword);
+        setUser(loginRes.user);
+        return;
+      } catch {
+        // If demo user does not exist in SQLite database yet, create it!
+        const regRes = await api.register(demoName, demoEmail, demoPassword);
+        setUser(regRes.user);
+      }
+    } catch (err: any) {
+      setAuthError(err.message || 'Unable to log into demo account.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = async () => {
+    setLoading(true);
+    try {
+      await api.logout();
+    } catch (err) {
+      console.warn('Logout request warning:', err);
+    } finally {
+      setUser(null);
+      setLoading(false);
+    }
   };
 
   return (
@@ -76,6 +124,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         register,
         logout,
         loading,
+        isInitializing,
+        authError,
       }}
     >
       {children}

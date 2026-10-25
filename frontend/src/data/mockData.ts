@@ -60,7 +60,7 @@ export const INITIAL_ANALYSIS_DATA: AnalysisRecord = {
   originalText: `We are writing this memo to touch base regarding our Q4 deliverables. At this point in time, our team beleives we need to synergize cross-functional bandwidth. Their are several bottleneck situations occurring in the pipeline, which effects our overall turnaround velocity. Please revert back with your feedback ASAP.`,
   improvedText: `We are writing to provide an update on our Q4 deliverables. Currently, our team recommends coordinating cross-functional resources. Several bottlenecks in the pipeline are affecting our turnaround time. Please share your feedback at your earliest convenience.`,
   targetTone: 'Professional',
-  providerUsed: 'Gemini (Primary)',
+  providerUsed: 'Groq + LanguageTool',
   createdAt: '2026-10-11T16:15:00Z',
   metrics: {
     fleschScore: 54.2,
@@ -185,7 +185,7 @@ export const MOCK_HISTORY: AnalysisRecord[] = [
     originalText: `The protocol was evaluated across twelve geo-distributed server instances. Latency distributions were measured rigorously.`,
     improvedText: `We evaluated the protocol across twelve geographically distributed servers, measuring latency distribution across various network conditions.`,
     targetTone: 'Academic',
-    providerUsed: 'Gemini (Primary)',
+    providerUsed: 'Groq + LanguageTool',
     createdAt: '2026-10-10T14:22:00Z',
     metrics: {
       fleschScore: 68.4,

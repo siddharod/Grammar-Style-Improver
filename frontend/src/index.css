@@ -1,16 +1,89 @@
 @import "tailwindcss";
 
+@theme {
+  --color-midnight: #021861;
+  --color-midnight-dark: #010e3b;
+  --color-midnight-light: #0a2782;
+  --color-cobalt: #255DCE;
+  --color-cobalt-hover: #1d4bb0;
+  --color-cobalt-light: #0A245F;
+  --color-brightred: #DE1110;
+  --color-brightred-hover: #b80d0c;
+  --color-brightred-light: #2a0808;
+  --color-app-bg: #04123F;
+  --color-surface: #071B50;
+  --color-surface-secondary: #0A245F;
+  --color-border: rgba(79, 130, 255, 0.25);
+}
+
 @layer base {
   :root {
     --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* ── Brand Palette (immutable) ── */
+    --brand-navy:   #021861;
+    --brand-cobalt: #255DCE;
+    --brand-red:    #DE1110;
+
+    /* ── Dark App Surfaces ── */
+    --app-background:     #04123F;
+    --surface-primary:    #071B50;
+    --surface-secondary:  #0A245F;
+    --surface-elevated:   #0D2E7A;
+    --surface-card:       #071B50;
+
+    /* ── Typography ── */
+    --text-primary:   #F5F7FF;
+    --text-secondary: #B8C8F5;
+    --text-muted:     #7B9AD0;
+
+    /* ── Borders ── */
+    --border-subtle:  rgba(79, 130, 255, 0.20);
+    --border-medium:  rgba(79, 130, 255, 0.35);
+    --border-strong:  rgba(37, 93, 206, 0.55);
+
+    /* ── Glow ── */
+    --glow-blue-sm:  rgba(37, 93, 206, 0.25);
+    --glow-blue-md:  rgba(37, 93, 206, 0.40);
+    --glow-blue-lg:  rgba(37, 93, 206, 0.55);
+    --glow-red:      rgba(222, 17, 16, 0.30);
+  }
+
+  html {
+    background-color: #04123F;
   }
 
   body {
     font-family: var(--font-sans);
-    background-color: #fafbfd;
-    color: #1e293b;
+    background-color: #04123F;
+    background-image:
+      radial-gradient(
+        ellipse at 88% 4%,
+        rgba(37, 93, 206, 0.32) 0%,
+        transparent 38%
+      ),
+      radial-gradient(
+        ellipse at 4% 88%,
+        rgba(37, 93, 206, 0.18) 0%,
+        transparent 36%
+      ),
+      radial-gradient(
+        ellipse at 50% 50%,
+        rgba(7, 27, 80, 0.6) 0%,
+        transparent 70%
+      ),
+      linear-gradient(
+        135deg,
+        #04123F 0%,
+        #021861 55%,
+        #07143D 100%
+      );
+    background-attachment: fixed;
+    background-size: cover;
+    color: var(--text-primary);
     margin: 0;
     padding: 0;
+    min-height: 100vh;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -18,21 +91,74 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background-color: transparent;
   }
 }
 
-/* Custom subtle scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ── Hero gradient ── */
+.hero-gradient {
+  background: linear-gradient(115deg, #021861 0%, #102F91 50%, #255DCE 100%);
 }
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
+
+/* ── Electric Glow effects ── */
+.electric-glow {
+  box-shadow: 0 0 28px rgba(37, 93, 206, 0.28);
 }
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 9999px;
+.electric-glow-lg {
+  box-shadow: 0 0 48px rgba(37, 93, 206, 0.42);
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+.electric-glow-btn {
+  box-shadow: 0 0 22px rgba(37, 93, 206, 0.50);
 }
+.electric-glow-btn:hover {
+  box-shadow: 0 0 36px rgba(37, 93, 206, 0.70);
+}
+.electric-glow-red {
+  box-shadow: 0 0 20px rgba(222, 17, 16, 0.35);
+}
+
+/* ── Electric borders ── */
+.electric-border {
+  border: 1px solid rgba(79, 130, 255, 0.25);
+}
+.electric-border-glow {
+  border: 1px solid rgba(79, 130, 255, 0.40);
+  box-shadow: 0 0 16px rgba(37, 93, 206, 0.22);
+}
+.electric-border-cobalt {
+  border: 1px solid rgba(37, 93, 206, 0.50);
+}
+
+/* ── Dark card base ── */
+.dark-card {
+  background: #071B50;
+  border: 1px solid rgba(79, 130, 255, 0.20);
+  border-radius: 1rem;
+}
+.dark-card-elevated {
+  background: #0A245F;
+  border: 1px solid rgba(79, 130, 255, 0.28);
+  border-radius: 1rem;
+}
+
+/* ── Subtle animated ambient pulse (respects reduced-motion) ── */
+@keyframes ambient-pulse {
+  0%, 100% { opacity: 0.60; }
+  50%       { opacity: 1.00; }
+}
+.ambient-glow {
+  animation: ambient-pulse 6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ambient-glow { animation: none; }
+}
+
+/* ── Scrollbars ── */
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #021861; }
+::-webkit-scrollbar-thumb { background: rgba(37, 93, 206, 0.50); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #255DCE; }
+
+/* ── Text size helpers (used across many pages) ── */
+.text-2xs { font-size: 0.65rem;  line-height: 1rem; }
+.text-3xs { font-size: 0.58rem;  line-height: 0.9rem; }

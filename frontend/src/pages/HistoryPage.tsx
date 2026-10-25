@@ -53,10 +53,14 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({
     setIsExportModalOpen(true);
   };
 
-  const handleDelete = (id: string, e: React.MouseEvent) => {
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    deleteHistoryRecord(id);
-    showToast('Record removed from analysis history.', 'info');
+    try {
+      await deleteHistoryRecord(id);
+      showToast('Record removed from analysis history.', 'info');
+    } catch (err: any) {
+      showToast(err.message || 'Failed to delete record.', 'error');
+    }
   };
 
   const handleLoad = (id: string) => {
@@ -117,17 +121,17 @@ ${record.issues.map((i, idx) => `${idx + 1}. [${i.category}] ${i.message} (Origi
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 bg-white rounded-2xl border border-slate-200/80 shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 bg-[#071B50] rounded-2xl border border-[rgba(79,130,255,0.25)] shadow-xl">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-purple-50 text-purple-600 border border-purple-100">
-            <History className="w-5 h-5" />
+          <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-[#255DCE] to-[#021861] text-white border border-[rgba(79,130,255,0.4)] shadow-md shadow-[#255DCE]/30">
+            <History className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-slate-800">
+            <h3 className="text-base font-bold text-white tracking-tight">
               Analysis History & Archive
             </h3>
-            <p className="text-xs text-slate-500">
-              All records for signed-in user <strong className="text-slate-700">{user?.email}</strong>
+            <p className="text-xs text-[#7B9AD0] mt-0.5">
+              All records for signed-in user <strong className="text-white font-semibold">{user?.email}</strong>
             </p>
           </div>
         </div>
@@ -142,10 +146,10 @@ ${record.issues.map((i, idx) => `${idx + 1}. [${i.category}] ${i.message} (Origi
       </div>
 
       {/* Search and Filters Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 bg-white rounded-2xl border border-slate-200/80 shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 bg-[#071B50] rounded-2xl border border-[rgba(79,130,255,0.25)] shadow-xl">
         {/* Search */}
         <div className="relative w-full sm:w-80">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#7B9AD0]">
             <Search className="w-4 h-4" />
           </div>
           <input
@@ -153,21 +157,21 @@ ${record.issues.map((i, idx) => `${idx + 1}. [${i.category}] ${i.message} (Origi
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by title or text snippet..."
-            className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400/50 text-slate-800"
+            className="w-full pl-9 pr-3 py-2 text-xs bg-[#0A245F] border border-[rgba(79,130,255,0.3)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#255DCE]/50 text-white placeholder:text-[#7B9AD0]/60"
           />
         </div>
 
         {/* Tone Filter */}
         <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-          <span className="text-xs font-semibold text-slate-400 shrink-0 mr-1">Tone:</span>
+          <span className="text-xs font-semibold text-[#7B9AD0] shrink-0 mr-1">Tone:</span>
           {tones.map((t) => (
             <button
               key={t}
               onClick={() => setSelectedTone(t)}
-              className={`text-xs px-2.5 py-1.5 rounded-lg font-medium transition-all cursor-pointer shrink-0 ${
+              className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer shrink-0 ${
                 selectedTone === t
-                  ? 'bg-purple-600 text-white shadow-2xs'
-                  : 'bg-slate-50 text-slate-600 border border-slate-200/80 hover:bg-slate-100'
+                  ? 'bg-gradient-to-r from-[#255DCE] to-[#102F91] text-white shadow-xs border border-[#255DCE]'
+                  : 'bg-[#0A245F] text-[#B8C8F5] border border-[rgba(79,130,255,0.2)] hover:bg-[#102F91]/50 hover:text-white'
               }`}
             >
               {t}
@@ -178,9 +182,9 @@ ${record.issues.map((i, idx) => `${idx + 1}. [${i.category}] ${i.message} (Origi
 
       {/* Records List or Empty State */}
       {filteredHistory.length === 0 ? (
-        <Card className="p-8">
+        <Card className="p-8 border-[rgba(79,130,255,0.25)] bg-[#071B50]">
           <EmptyState
-            icon={<FileText className="w-6 h-6 text-purple-600" />}
+            icon={<FileText className="w-6 h-6 text-[#255DCE]" />}
             title="No History Records Found"
             description={
               searchTerm || selectedTone !== 'All'
@@ -198,49 +202,49 @@ ${record.issues.map((i, idx) => `${idx + 1}. [${i.category}] ${i.message} (Origi
               key={item.id}
               onClick={() => handleLoad(item.id)}
               hoverEffect={true}
-              className="p-5 border-slate-200/90 shadow-2xs cursor-pointer group"
+              className="p-5 border-[rgba(79,130,255,0.25)] shadow-xl cursor-pointer group bg-[#071B50] hover:border-[#255DCE]/70 hover:shadow-[#255DCE]/10 transition-all"
             >
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-100">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 mb-3 border-b border-[rgba(79,130,255,0.2)]">
                 <div className="flex items-center gap-2.5">
-                  <h4 className="text-sm font-bold text-slate-800 group-hover:text-purple-700 transition-colors">
+                  <h4 className="text-sm font-bold text-white group-hover:text-[#93b4fd] transition-colors">
                     {item.title}
                   </h4>
-                  <Badge variant="lavender" size="sm">
+                  <Badge variant="blue" size="sm">
                     {item.targetTone}
                   </Badge>
-                  <span className="text-2xs font-mono text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+                  <span className="text-2xs font-mono text-[#B8C8F5] bg-[#0A245F] px-2.5 py-0.5 rounded-md border border-[rgba(79,130,255,0.25)]">
                     {item.metrics.wordCount} words
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3 text-2xs text-slate-400">
+                <div className="flex items-center gap-3 text-2xs text-[#7B9AD0]">
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
+                    <Clock className="w-3 h-3 text-[#255DCE]" />
                     {new Date(item.createdAt).toLocaleDateString()}
                   </span>
                 </div>
               </div>
 
               {/* Text Preview Snippet */}
-              <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-4">
+              <p className="text-xs text-[#B8C8F5] line-clamp-2 leading-relaxed mb-4 font-sans">
                 "{item.originalText}"
               </p>
 
               {/* Bottom Metrics Bar & Action Buttons */}
               <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
                 <div className="flex flex-wrap items-center gap-2 text-2xs">
-                  <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 font-semibold border border-blue-100">
+                  <span className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-[#102F91] to-[#0A245F] text-white font-bold border border-[#255DCE]/40">
                     Flesch: {item.metrics.fleschScore} ({item.metrics.fleschCategory})
                   </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-medium">
+                  <span className="px-2.5 py-1 rounded-lg bg-[#0A245F] text-[#B8C8F5] font-semibold border border-[rgba(79,130,255,0.25)]">
                     Grade: {item.metrics.gradeLevel}
                   </span>
                   {item.issues.length > 0 ? (
-                    <span className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 font-medium border border-rose-100">
+                    <span className="px-2.5 py-1 rounded-lg bg-[#2a0808]/70 text-[#fca5a5] font-semibold border border-[#DE1110]/40">
                       {item.issues.length} Issues
                     </span>
                   ) : (
-                    <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-medium border border-emerald-100">
+                    <span className="px-2.5 py-1 rounded-lg bg-[#0A245F] text-[#255DCE] font-semibold border border-[#255DCE]/30">
                       0 Issues Clean
                     </span>
                   )}
@@ -250,20 +254,20 @@ ${record.issues.map((i, idx) => `${idx + 1}. [${i.category}] ${i.message} (Origi
                 <div className="flex items-center gap-2">
                   <button
                     onClick={(e) => handleOpenExport(item, e)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors text-xs flex items-center gap-1 cursor-pointer"
+                    className="p-1.5 rounded-lg text-[#B8C8F5] hover:text-white hover:bg-[#0A245F] transition-colors text-xs flex items-center gap-1 cursor-pointer border border-[rgba(79,130,255,0.2)]"
                     title="Export report"
                   >
-                    <Download className="w-3.5 h-3.5" />
+                    <Download className="w-3.5 h-3.5 text-[#255DCE]" />
                     <span>Export</span>
                   </button>
                   <button
                     onClick={(e) => handleDelete(item.id, e)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg text-[#DE1110] hover:text-white hover:bg-[#DE1110] transition-colors cursor-pointer border border-[#DE1110]/30"
                     title="Delete record"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
-                  <span className="text-xs font-semibold text-purple-600 group-hover:underline flex items-center gap-1 ml-1">
+                  <span className="text-xs font-semibold text-[#93b4fd] group-hover:text-white flex items-center gap-1 ml-1 transition-colors">
                     Load Record →
                   </span>
                 </div>
@@ -283,12 +287,12 @@ ${record.issues.map((i, idx) => `${idx + 1}. [${i.category}] ${i.message} (Origi
           maxWidth="lg"
         >
           <div className="space-y-4">
-            <p className="text-xs text-slate-600">
+            <p className="text-xs text-[#B8C8F5]">
               Download the complete analysis report including mathematical readability metrics,
               syntactic grammar rules, and AI rewrites:
             </p>
 
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-2xs font-mono text-slate-700 max-h-48 overflow-y-auto whitespace-pre-wrap">
+            <div className="p-4 bg-[#04123F] rounded-xl border border-[rgba(79,130,255,0.25)] text-2xs font-mono text-[#F5F7FF] max-h-56 overflow-y-auto whitespace-pre-wrap selection:bg-[#255DCE]/40">
               {generateMarkdownReport(selectedRecordForExport)}
             </div>
 
@@ -297,7 +301,7 @@ ${record.issues.map((i, idx) => `${idx + 1}. [${i.category}] ${i.message} (Origi
                 variant="outline"
                 size="sm"
                 onClick={handleCopyExportMarkdown}
-                leftIcon={copiedExport ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                leftIcon={copiedExport ? <Check className="w-3.5 h-3.5 text-[#255DCE]" /> : <Copy className="w-3.5 h-3.5" />}
               >
                 {copiedExport ? 'Copied' : 'Copy as Markdown'}
               </Button>

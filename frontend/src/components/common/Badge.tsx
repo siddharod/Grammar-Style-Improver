@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type BadgeVariant = 'lavender' | 'blue' | 'pink' | 'mint' | 'slate' | 'amber';
+export type BadgeVariant = 'navy' | 'blue' | 'red' | 'lavender' | 'pink' | 'mint' | 'slate' | 'amber';
 
 interface BadgeProps {
   children: React.ReactNode;
@@ -12,18 +12,20 @@ interface BadgeProps {
 
 export const Badge: React.FC<BadgeProps> = ({
   children,
-  variant = 'lavender',
+  variant = 'blue',
   size = 'md',
   icon,
   className = '',
 }) => {
   const variantStyles: Record<BadgeVariant, string> = {
-    lavender: 'bg-purple-50 text-purple-700 border-purple-200/80',
-    blue: 'bg-blue-50 text-blue-700 border-blue-200/80',
-    pink: 'bg-pink-50 text-pink-700 border-pink-200/80',
-    mint: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
-    slate: 'bg-slate-100 text-slate-700 border-slate-200',
-    amber: 'bg-amber-50 text-amber-700 border-amber-200/80',
+    navy:    'bg-[#021861]/80 text-[#B8C8F5] border-[rgba(37,93,206,0.45)]',
+    blue:    'bg-[#255DCE]/20 text-[#93b4fd] border-[rgba(37,93,206,0.50)]',
+    red:     'bg-[#DE1110]/15 text-[#ff7b7b] border-[rgba(222,17,16,0.45)]',
+    lavender:'bg-[#021861]/60 text-[#B8C8F5] border-[rgba(37,93,206,0.35)]',
+    pink:    'bg-[#DE1110]/15 text-[#ff7b7b] border-[rgba(222,17,16,0.45)]',
+    mint:    'bg-[#255DCE]/15 text-[#93b4fd] border-[rgba(37,93,206,0.40)]',
+    slate:   'bg-[#071B50] text-[#B8C8F5] border-[rgba(79,130,255,0.25)]',
+    amber:   'bg-amber-950/60 text-amber-300 border-amber-700/40',
   };
 
   const sizeStyles = {

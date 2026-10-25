@@ -35,21 +35,21 @@ export const ImprovedTextPage: React.FC<ImprovedTextPageProps> = ({
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 bg-white rounded-2xl border border-slate-200/80 shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 bg-[#071B50] rounded-2xl border border-[rgba(79,130,255,0.25)] shadow-xl">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-purple-50 text-purple-600 border border-purple-100">
-            <Sparkles className="w-5 h-5" />
+          <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-[#255DCE] to-[#021861] text-white border border-[rgba(79,130,255,0.4)] shadow-md shadow-[#255DCE]/30">
+            <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-slate-800">
+            <div className="flex items-center gap-2.5">
+              <h3 className="text-base font-bold text-white tracking-tight">
                 AI-Improved Text & Side-by-Side Comparison
               </h3>
-              <Badge variant="lavender" size="sm">
+              <Badge variant="blue" size="sm">
                 Target: {currentAnalysis.targetTone}
               </Badge>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-[#7B9AD0] mt-0.5">
               Inspect semantic rewrites, copy polished output, or view token-level diff highlights
             </p>
           </div>
@@ -85,38 +85,38 @@ export const ImprovedTextPage: React.FC<ImprovedTextPageProps> = ({
 
       {/* Comparison Insights Card */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-4 bg-emerald-50/50 border-emerald-100">
-          <div className="flex items-center gap-2 mb-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            <span className="text-xs font-bold text-emerald-950 uppercase tracking-wider">
+        <Card className="p-4 bg-[#071B50] border-[rgba(79,130,255,0.25)]">
+          <div className="flex items-center gap-2 mb-2">
+            <CheckCircle2 className="w-4 h-4 text-[#255DCE]" />
+            <span className="text-xs font-bold text-white uppercase tracking-wider">
               Grammar & Flow
             </span>
           </div>
-          <p className="text-2xs text-emerald-800 leading-relaxed">
+          <p className="text-2xs text-[#B8C8F5] leading-relaxed">
             All flagged spelling errors, grammatical anomalies, and punctuation inconsistencies have been corrected.
           </p>
         </Card>
 
-        <Card className="p-4 bg-purple-50/50 border-purple-100">
-          <div className="flex items-center gap-2 mb-1.5">
-            <TrendingUp className="w-4 h-4 text-purple-600" />
-            <span className="text-xs font-bold text-purple-950 uppercase tracking-wider">
+        <Card className="p-4 bg-[#0A245F] border-[rgba(79,130,255,0.25)]">
+          <div className="flex items-center gap-2 mb-2">
+            <TrendingUp className="w-4 h-4 text-[#93b4fd]" />
+            <span className="text-xs font-bold text-white uppercase tracking-wider">
               Target Tone
             </span>
           </div>
-          <p className="text-2xs text-purple-800 leading-relaxed">
-            Language has been calibrated to match your chosen <strong>{currentAnalysis.targetTone}</strong> writing goal.
+          <p className="text-2xs text-[#B8C8F5] leading-relaxed">
+            Language has been calibrated to match your chosen <strong className="text-white font-semibold">{currentAnalysis.targetTone}</strong> writing goal.
           </p>
         </Card>
 
-        <Card className="p-4 bg-blue-50/50 border-blue-100">
-          <div className="flex items-center gap-2 mb-1.5">
-            <Zap className="w-4 h-4 text-blue-600" />
-            <span className="text-xs font-bold text-blue-950 uppercase tracking-wider">
+        <Card className="p-4 bg-[#071B50] border-[rgba(79,130,255,0.25)]">
+          <div className="flex items-center gap-2 mb-2">
+            <Zap className="w-4 h-4 text-[#255DCE]" />
+            <span className="text-xs font-bold text-white uppercase tracking-wider">
               Conciseness & Clarity
             </span>
           </div>
-          <p className="text-2xs text-blue-800 leading-relaxed">
+          <p className="text-2xs text-[#B8C8F5] leading-relaxed">
             Extraneous filler phrasing, corporate jargon, and convoluted clauses have been simplified for optimal Flesch readability.
           </p>
         </Card>

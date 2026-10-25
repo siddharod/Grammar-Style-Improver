@@ -21,27 +21,27 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-60 disabled:cursor-not-allowed select-none cursor-pointer';
+    'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-[#04123F] disabled:opacity-50 disabled:cursor-not-allowed select-none cursor-pointer';
 
   const variantStyles = {
     primary:
-      'bg-purple-600 text-white hover:bg-purple-700 active:bg-purple-800 shadow-sm focus:ring-purple-400 border border-transparent',
+      'bg-[#021861] text-white hover:bg-[#0a2782] active:bg-[#010e3b] shadow-sm hover:shadow-[0_0_18px_rgba(37,93,206,0.40)] focus:ring-[#255DCE]/50 border border-[rgba(37,93,206,0.5)]',
     secondary:
-      'bg-purple-50 text-purple-700 hover:bg-purple-100 active:bg-purple-200 border border-purple-200/70 focus:ring-purple-300',
+      'bg-[#255DCE] text-white hover:bg-[#1d4bb0] active:bg-[#163b90] shadow-sm hover:shadow-[0_0_18px_rgba(37,93,206,0.50)] focus:ring-[#255DCE]/50 border border-transparent',
     outline:
-      'bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 border border-slate-200/90 shadow-2xs hover:border-slate-300 focus:ring-slate-300',
+      'bg-transparent text-[#B8C8F5] hover:bg-[#0A245F] hover:text-white active:bg-[#071B50] border border-[rgba(79,130,255,0.35)] hover:border-[rgba(37,93,206,0.60)] focus:ring-[#255DCE]/30 shadow-none',
     ghost:
-      'bg-transparent text-slate-600 hover:bg-slate-100/70 hover:text-slate-900 focus:ring-slate-200',
+      'bg-transparent text-[#B8C8F5] hover:bg-[#071B50] hover:text-white focus:ring-[rgba(37,93,206,0.30)]',
     mint:
-      'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 focus:ring-emerald-300',
+      'bg-[#0A245F] text-[#B8C8F5] hover:bg-[#0D2E7A] hover:text-white border border-[rgba(79,130,255,0.35)] focus:ring-[#255DCE]/30',
     danger:
-      'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 focus:ring-rose-300',
+      'bg-[#DE1110] text-white hover:bg-[#B80D0C] active:bg-[#960908] shadow-sm hover:shadow-[0_0_14px_rgba(222,17,16,0.40)] focus:ring-[#DE1110]/40 border border-transparent',
   };
 
   const sizeStyles = {
     sm: 'text-xs px-3 py-1.5 gap-1.5 font-medium',
-    md: 'text-sm px-4 py-2 gap-2 font-medium',
-    lg: 'text-base px-5 py-2.5 gap-2.5 font-semibold',
+    md: 'text-xs sm:text-sm px-4 py-2 gap-2 font-medium',
+    lg: 'text-sm sm:text-base px-5 py-2.5 gap-2.5 font-semibold',
   };
 
   return (
@@ -52,7 +52,7 @@ export const Button: React.FC<ButtonProps> = ({
     >
       {isLoading ? (
         <>
-          <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+          <Loader2 className="w-4 h-4 animate-spin shrink-0 text-current" />
           <span>Processing...</span>
         </>
       ) : (

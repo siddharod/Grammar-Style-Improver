@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  CheckCheck,
-  Check,
-  ArrowRight,
-  Filter,
-} from 'lucide-react';
+import { CheckCheck, Check, ArrowRight, Filter } from 'lucide-react';
 import { useAnalysis } from '../context/AnalysisContext';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
@@ -45,55 +40,56 @@ export const GrammarAnalysisPage: React.FC<GrammarAnalysisPageProps> = ({
 
   const getCategoryBadgeVariant = (cat: GrammarCategory) => {
     switch (cat) {
-      case 'Spelling':
-        return 'pink';
-      case 'Grammar':
-        return 'lavender';
-      case 'Style & Clarity':
-        return 'blue';
-      case 'Punctuation':
-        return 'amber';
-      default:
-        return 'slate';
+      case 'Spelling':     return 'red';
+      case 'Grammar':      return 'navy';
+      case 'Style & Clarity': return 'blue';
+      case 'Punctuation':  return 'amber';
+      default:             return 'slate';
     }
+  };
+
+  const panelStyle = {
+    background: '#071B50',
+    border: '1px solid rgba(79,130,255,0.22)',
   };
 
   return (
     <div className="space-y-6">
-      {/* Top Summary Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 bg-white rounded-2xl border border-slate-200/80 shadow-2xs">
+      {/* Top Banner */}
+      <div
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl"
+        style={panelStyle}
+      >
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-purple-50 text-purple-600 border border-purple-100">
-            <CheckCheck className="w-5 h-5" />
+          <div
+            className="flex items-center justify-center w-11 h-11 rounded-xl shrink-0"
+            style={{ background: 'rgba(37,93,206,0.15)', border: '1px solid rgba(37,93,206,0.40)' }}
+          >
+            <CheckCheck className="w-5 h-5 text-[#255DCE]" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-slate-800">
-              Grammar & Spelling Diagnostics
-            </h3>
-            <p className="text-xs text-slate-500">
+            <h3 className="text-base font-bold text-white">Grammar & Spelling Diagnostics</h3>
+            <p className="text-xs" style={{ color: '#7B9AD0' }}>
               LanguageTool HTTP API • {currentAnalysis.issues.length} active issue
               {currentAnalysis.issues.length === 1 ? '' : 's'} identified
             </p>
           </div>
         </div>
-
         {currentAnalysis.issues.length > 0 && (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="mint"
-              size="sm"
-              onClick={handleApplyAll}
-              leftIcon={<Check className="w-3.5 h-3.5" />}
-            >
-              Apply All Corrections
-            </Button>
-          </div>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleApplyAll}
+            leftIcon={<Check className="w-3.5 h-3.5" />}
+          >
+            Apply All Corrections
+          </Button>
         )}
       </div>
 
-      {/* Category Filter Pills */}
+      {/* Filter pills */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-semibold text-slate-500 flex items-center gap-1.5 mr-1">
+        <span className="text-xs font-semibold flex items-center gap-1.5 mr-1" style={{ color: '#7B9AD0' }}>
           <Filter className="w-3.5 h-3.5" /> Filter by:
         </span>
         {categories.map((cat) => {
@@ -105,11 +101,12 @@ export const GrammarAnalysisPage: React.FC<GrammarAnalysisPageProps> = ({
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`text-xs px-3 py-1.5 rounded-xl font-medium transition-all cursor-pointer ${
+              className="text-xs px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer"
+              style={
                 selectedCategory === cat
-                  ? 'bg-purple-600 text-white shadow-2xs'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-              }`}
+                  ? { background: '#255DCE', color: '#fff', boxShadow: '0 0 12px rgba(37,93,206,0.45)' }
+                  : { background: 'rgba(7,27,80,0.70)', color: '#B8C8F5', border: '1px solid rgba(79,130,255,0.25)' }
+              }
             >
               {cat} ({count})
             </button>
@@ -117,90 +114,126 @@ export const GrammarAnalysisPage: React.FC<GrammarAnalysisPageProps> = ({
         })}
       </div>
 
-      {/* Issues List or Empty State */}
+      {/* Issues list */}
       {filteredIssues.length === 0 ? (
-        <Card className="p-8">
+        <Card>
           <EmptyState
-            icon={<CheckCheck className="w-6 h-6 text-emerald-600" />}
+            icon={<CheckCheck className="w-6 h-6 text-[#255DCE]" />}
             title="No Grammar or Spelling Issues"
             description={
               currentAnalysis.issues.length === 0
-                ? "Excellent! Your current text adheres to all LanguageTool syntactic, spelling, and punctuation rules."
+                ? 'Excellent! Your text adheres to all LanguageTool syntactic, spelling, and punctuation rules.'
                 : `No issues found under the "${selectedCategory}" category.`
             }
-            actionLabel="View Readability & Tone"
+            actionLabel="Proceed to Improved Text"
             onAction={onNavigateToImproved}
           />
         </Card>
       ) : (
         <div className="space-y-3.5">
           {filteredIssues.map((issue) => (
-            <Card
+            <div
               key={issue.id}
-              className="p-5 hover:border-slate-300 transition-all border-slate-200/90 shadow-2xs"
+              className="p-5 rounded-2xl transition-all"
+              style={{
+                background: '#071B50',
+                border: '1px solid rgba(79,130,255,0.22)',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(37,93,206,0.50)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(79,130,255,0.22)';
+              }}
             >
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 mb-3 border-b border-slate-100">
+              <div
+                className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 mb-3"
+                style={{ borderBottom: '1px solid rgba(37,93,206,0.22)' }}
+              >
                 <div className="flex items-center gap-2">
                   <Badge variant={getCategoryBadgeVariant(issue.category)} size="sm">
                     {issue.category}
                   </Badge>
                   {issue.ruleId && (
-                    <span className="text-2xs font-mono text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+                    <span
+                      className="text-xs font-mono px-2 py-0.5 rounded"
+                      style={{
+                        background: 'rgba(10,36,95,0.80)',
+                        border: '1px solid rgba(79,130,255,0.25)',
+                        color: '#93b4fd',
+                      }}
+                    >
                       Rule: {issue.ruleId}
                     </span>
                   )}
                 </div>
-
-                <span className="text-2xs text-slate-400 font-mono">
+                <span className="text-xs font-mono" style={{ color: '#7B9AD0' }}>
                   Offset: {issue.offset} • Length: {issue.length}
                 </span>
               </div>
 
-              {/* Issue Description */}
-              <p className="text-xs sm:text-sm font-semibold text-slate-800 leading-snug mb-3">
-                {issue.message}
-              </p>
+              <p className="text-sm font-semibold text-white leading-snug mb-3">{issue.message}</p>
 
-              {/* Original snippet vs Replacements */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-3.5 rounded-xl bg-slate-50/70 border border-slate-100">
+              <div
+                className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-3.5 rounded-xl"
+                style={{ background: 'rgba(10,36,95,0.60)', border: '1px solid rgba(79,130,255,0.20)' }}
+              >
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="text-slate-500 font-medium">Found in text:</span>
-                  <span className="font-mono bg-rose-100/90 text-rose-800 px-2 py-0.5 rounded text-xs line-through font-semibold">
+                  <span style={{ color: '#7B9AD0' }} className="font-medium">Found in text:</span>
+                  <span
+                    className="font-mono px-2 py-0.5 rounded text-xs font-semibold line-through"
+                    style={{
+                      background: 'rgba(222,17,16,0.12)',
+                      border: '1px solid rgba(222,17,16,0.35)',
+                      color: '#ff7b7b',
+                    }}
+                  >
                     {issue.originalText}
                   </span>
                 </div>
 
-                {/* Replacement options */}
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs text-slate-500 font-medium">Suggestions:</span>
+                  <span className="text-xs font-medium" style={{ color: '#7B9AD0' }}>Suggestions:</span>
                   {issue.replacements.map((rep, idx) => (
                     <button
                       key={idx}
                       onClick={() => handleApplyFix(issue.id, rep)}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 text-xs font-semibold transition-all cursor-pointer hover:shadow-2xs"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer"
+                      style={{
+                        background: 'rgba(37,93,206,0.15)',
+                        border: '1px solid rgba(37,93,206,0.40)',
+                        color: '#93b4fd',
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLElement).style.background = '#255DCE';
+                        (e.currentTarget as HTMLElement).style.color = '#fff';
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLElement).style.background = 'rgba(37,93,206,0.15)';
+                        (e.currentTarget as HTMLElement).style.color = '#93b4fd';
+                      }}
                     >
                       <span>{rep}</span>
-                      <span className="text-2xs font-normal text-emerald-600 underline">Apply Fix</span>
+                      <span className="text-xs font-normal opacity-75">Apply</span>
                     </button>
                   ))}
                 </div>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}
 
-      {/* Bottom Action Footer */}
-      <div className="flex items-center justify-between pt-4 border-t border-slate-200">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onNavigateToAnalyzer}
-        >
+      {/* Footer */}
+      <div
+        className="flex items-center justify-between pt-4"
+        style={{ borderTop: '1px solid rgba(37,93,206,0.22)' }}
+      >
+        <Button variant="outline" size="sm" onClick={onNavigateToAnalyzer}>
           ← Back to Text Analyzer
         </Button>
         <Button
-          variant="primary"
+          variant="secondary"
           size="sm"
           onClick={onNavigateToImproved}
           rightIcon={<ArrowRight className="w-4 h-4" />}

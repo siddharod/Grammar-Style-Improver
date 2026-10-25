@@ -41,7 +41,7 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({
     const impWords = imp.trim().split(/\s+/);
 
     return (
-      <div className="leading-relaxed text-sm text-slate-700 space-y-2">
+      <div className="leading-relaxed text-sm text-[#F5F7FF] space-y-2">
         <p className="font-sans">
           {impWords.map((word, idx) => {
             const isAdded = !origWords.includes(word);
@@ -50,8 +50,8 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({
                 key={idx}
                 className={
                   isAdded
-                    ? 'inline-block bg-emerald-100/90 text-emerald-800 px-1 py-0.5 mx-0.5 rounded text-xs font-semibold'
-                    : 'inline-block mr-1'
+                    ? 'inline-block bg-[#255DCE]/30 text-white border border-[#255DCE] px-1.5 py-0.5 mx-0.5 rounded text-xs font-semibold shadow-xs shadow-[#255DCE]/20'
+                    : 'inline-block mr-1 text-[#B8C8F5]'
                 }
               >
                 {word}{' '}
@@ -66,33 +66,33 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({
   return (
     <div className="flex flex-col gap-4">
       {/* Top action toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-[#071B50] rounded-xl border border-[rgba(79,130,255,0.25)] shadow-lg shadow-black/20">
         <div className="flex items-center gap-2">
-          <div className="flex items-center bg-slate-100 p-1 rounded-xl">
+          <div className="flex items-center bg-[#04123F] p-1 rounded-xl border border-[rgba(79,130,255,0.25)]">
             <button
               onClick={() => setViewMode('side-by-side')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 viewMode === 'side-by-side'
-                  ? 'bg-white text-slate-800 shadow-2xs'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-gradient-to-r from-[#255DCE] to-[#102F91] text-white shadow-xs electric-glow-btn'
+                  : 'text-[#7B9AD0] hover:text-[#F5F7FF]'
               }`}
             >
-              <ArrowRightLeft className="w-3.5 h-3.5 text-purple-600" /> Side-by-Side
+              <ArrowRightLeft className="w-3.5 h-3.5" /> Side-by-Side
             </button>
             <button
               onClick={() => setViewMode('unified')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 viewMode === 'unified'
-                  ? 'bg-white text-slate-800 shadow-2xs'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-gradient-to-r from-[#255DCE] to-[#102F91] text-white shadow-xs electric-glow-btn'
+                  : 'text-[#7B9AD0] hover:text-[#F5F7FF]'
               }`}
             >
-              <Layers className="w-3.5 h-3.5 text-emerald-600" /> Highlight Changes
+              <Layers className="w-3.5 h-3.5" /> Highlight Changes
             </button>
           </div>
-          <span className="hidden sm:inline-block text-xs text-slate-400">|</span>
-          <span className="hidden sm:inline-flex items-center gap-1 text-xs font-medium text-slate-600 bg-purple-50 px-2 py-1 rounded-md border border-purple-100">
-            <Sparkles className="w-3 h-3 text-purple-500" /> Tone: {targetTone}
+          <span className="hidden sm:inline-block text-xs text-[rgba(79,130,255,0.3)]">|</span>
+          <span className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-[#B8C8F5] bg-[#0A245F] px-2.5 py-1 rounded-lg border border-[rgba(79,130,255,0.3)]">
+            <Sparkles className="w-3 h-3 text-[#255DCE]" /> Tone: {targetTone}
           </span>
         </div>
 
@@ -101,7 +101,7 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({
             variant="outline"
             size="sm"
             onClick={handleCopyImproved}
-            leftIcon={copiedImproved ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+            leftIcon={copiedImproved ? <Check className="w-3.5 h-3.5 text-[#255DCE]" /> : <Copy className="w-3.5 h-3.5" />}
           >
             {copiedImproved ? 'Copied!' : 'Copy Improved'}
           </Button>
@@ -121,56 +121,57 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({
       {viewMode === 'side-by-side' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Left: Original */}
-          <div className="flex flex-col bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-3.5 bg-slate-50/70 border-b border-slate-100">
+          <div className="flex flex-col bg-[#071B50] rounded-2xl border border-[rgba(79,130,255,0.25)] shadow-xl overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-3.5 bg-[#0A245F]/90 border-b border-[rgba(79,130,255,0.2)]">
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#7B9AD0]"></span>
+                <span className="text-xs font-bold text-[#7B9AD0] uppercase tracking-wider">
                   Original Draft
                 </span>
               </div>
               <button
                 onClick={handleCopyOriginal}
-                className="text-xs font-medium text-slate-500 hover:text-slate-700 flex items-center gap-1 cursor-pointer"
+                className="text-xs font-medium text-[#7B9AD0] hover:text-white flex items-center gap-1 cursor-pointer transition-colors"
               >
-                {copiedOriginal ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                {copiedOriginal ? <Check className="w-3 h-3 text-[#255DCE]" /> : <Copy className="w-3 h-3" />}
                 {copiedOriginal ? 'Copied' : 'Copy'}
               </button>
             </div>
-            <div className="p-5 text-sm leading-relaxed text-slate-700 whitespace-pre-wrap min-h-[220px]">
+            <div className="p-5 text-sm leading-relaxed text-[#B8C8F5] whitespace-pre-wrap min-h-[220px] bg-[#04123F]/40 font-sans">
               {originalText}
             </div>
           </div>
 
           {/* Right: Improved */}
-          <div className="flex flex-col bg-white rounded-2xl border border-purple-200/80 shadow-2xs overflow-hidden ring-1 ring-purple-100">
-            <div className="flex items-center justify-between px-5 py-3.5 bg-purple-50/50 border-b border-purple-100">
+          <div className="flex flex-col bg-[#071B50] rounded-2xl border border-[#255DCE]/50 shadow-xl overflow-hidden ring-1 ring-[#255DCE]/40 electric-border-glow">
+            <div className="flex items-center justify-between px-5 py-3.5 bg-gradient-to-r from-[#102F91]/80 to-[#0A245F] border-b border-[#255DCE]/30">
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
-                <span className="text-xs font-bold text-purple-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-purple-600" /> Improved Text
+                <span className="w-2.5 h-2.5 rounded-full bg-[#255DCE] shadow-sm shadow-[#255DCE]"></span>
+                <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#255DCE]" /> Improved Text
                 </span>
               </div>
-              <span className="text-2xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+              <span className="text-2xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#255DCE] text-white shadow-xs electric-glow-btn">
                 Polished
               </span>
             </div>
-            <div className="p-5 text-sm leading-relaxed text-slate-800 whitespace-pre-wrap min-h-[220px]">
+            <div className="p-5 text-sm leading-relaxed text-white whitespace-pre-wrap min-h-[220px] bg-[#04123F]/40 font-sans font-normal">
               {improvedText}
             </div>
           </div>
         </div>
       ) : (
         /* Unified Highlight View */
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs p-6">
-          <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
-            <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+        <div className="bg-[#071B50] rounded-2xl border border-[rgba(79,130,255,0.25)] shadow-xl p-6">
+          <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-[rgba(79,130,255,0.2)]">
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#255DCE]"></span>
               Highlighted Enhancements
             </h4>
             <div className="flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1">
-                <span className="inline-block w-2.5 h-2.5 rounded bg-emerald-200"></span>
-                <span className="text-slate-600 font-medium">Added / Improved Phrasing</span>
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block w-2.5 h-2.5 rounded bg-[#255DCE] shadow-xs shadow-[#255DCE]"></span>
+                <span className="text-[#B8C8F5] font-medium text-xs">Added / Improved Phrasing</span>
               </span>
             </div>
           </div>

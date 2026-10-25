@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { AIChatbot } from '../chat/AIChatbot';
 
 interface AppLayoutProps {
   currentTab: string;
@@ -16,7 +17,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#fafbfd] flex">
+    <div className="min-h-screen flex relative" style={{ backgroundColor: 'transparent' }}>
       {/* Sidebar */}
       <Sidebar
         currentTab={currentTab}
@@ -36,6 +37,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           {children}
         </main>
       </div>
+
+      {/* Floating AI Writing Assistant Chatbot */}
+      <AIChatbot />
     </div>
   );
 };

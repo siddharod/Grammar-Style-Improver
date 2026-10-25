@@ -25,13 +25,15 @@ export interface ReadabilityMetrics {
   averageSentenceLength: number;
   averageSyllablesPerWord: number;
   complexWordPercentage: number;
+  isMeaningful?: boolean;
+  sampleSizeNotice?: string;
 }
 
 export interface ToneMetric {
   tone: string;
   percentage: number;
   description: string;
-  color: 'lavender' | 'blue' | 'pink' | 'mint';
+  color: 'lavender' | 'blue' | 'pink' | 'mint' | string;
 }
 
 export interface WritingSuggestion {
@@ -55,7 +57,8 @@ export interface AnalysisRecord {
   metrics: ReadabilityMetrics;
   issues: GrammarIssue[];
   suggestions: WritingSuggestion[];
-  providerUsed: 'Gemini (Primary)' | 'Groq (Fallback)' | 'LanguageTool (Grammar)';
+  providerUsed: string;
+  moduleStatus?: Record<string, any>;
   createdAt: string;
 }
 
